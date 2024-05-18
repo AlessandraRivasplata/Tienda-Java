@@ -132,13 +132,13 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
         
     }
 
-    private void openCashView() {
+    public void openCashView() {
         //  método para abrir la vista de contar caja
         CashView cashView = new CashView();
         cashView.setVisible(true);
     }
 
-    private void openProductView(int option) {
+    public void openProductView(int option) {
         //  método para abrir la vista de añadir producto,stock o eliminar producto
         ProductView productView = new ProductView(shop, option);
         productView.setVisible(true);
