@@ -125,7 +125,7 @@ public class ProductView extends JDialog implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == okButton) 
+        if (e.getSource() == okButton) {
             String productName = textFieldNameProduct.getText();
             String productStockText = textFieldProductStock.getText();
             String productPriceText = textFieldProductPrice.getText();
