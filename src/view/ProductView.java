@@ -27,12 +27,12 @@ public class ProductView extends JDialog implements ActionListener {
     private int option;
     private Shop shop;
     private JButton okButton;
-    private ShopView shopView;
+   
 
     public ProductView(Shop shop, int option) {
         this.shop = shop;
         this.option = option;
-        //this.shopView = shopView;
+       
 
         setBounds(100, 100, 450, 300);
         getContentPane().setLayout(new BorderLayout());
@@ -82,6 +82,16 @@ public class ProductView extends JDialog implements ActionListener {
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setActionCommand("Cancel");
         buttonPane.add(cancelButton);
+        cancelButton.addActionListener(new ActionListener() {
+        	
+            public void actionPerformed(ActionEvent e) {
+                dispose(); // Cierra la ventana actual
+                // Muestra el menú principal
+                ShopView shopView = new ShopView();
+                shopView.setVisible(true);
+            }
+        });
+
     
    
     switch (option) {
@@ -117,80 +127,70 @@ public class ProductView extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == okButton) {
             String productName = textFieldNameProduct.getText();
-            int productStock = Integer.parseInt(textFieldProductStock.getText());
-            double productPrice = Double.parseDouble(textFieldProductPrice.getText());
+            String productStockText = textFieldProductStock.getText();
+            String productPriceText = textFieldProductPrice.getText();
 
             switch (option) {
                 case 2: // Añadir producto
-                   
-                    Product newProduct = new Product(productName, productPrice, true, productStock);
-
-                    // Verificar si el producto ya existe en el inventario
-                    if (shop.findProduct(productName) == null) {
-                        // Si no existe, agregar el nuevo producto al inventario
-                        shop.addProduct(newProduct);
-                        JOptionPane.showMessageDialog(this, "Producto añadido exitosamente al inventario.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        dispose();
+                    if (!productName.isEmpty() && !productStockText.isEmpty() && !productPriceText.isEmpty()) {
+                        try {
+                            int productStock = Integer.parseInt(productStockText);
+                            double productPrice = Double.parseDouble(productPriceText);
+                            if (shop.findProduct(productName) == null) {
+                                Product newProduct = new Product(productName, productPrice, true, productStock);
+                                shop.addProduct(newProduct);
+                                JOptionPane.showMessageDialog(this, "Producto añadido al inventario", "Información", JOptionPane.INFORMATION_MESSAGE);
+                                dispose();
+                            } else {
+                                JOptionPane.showMessageDialog(this, "El producto ya existe en el inventario", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(this, "El stock y el precio tienen que ser números válido", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     } else {
-                        // Si el producto ya existe, mostrar un mensaje de error
-                        JOptionPane.showMessageDialog(this, "El producto ya existe en el inventario.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "No puede dejar los campos vacios", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     break;
-                case 3: // Añadir stock
-                	// Obtener el nombre del producto y el stock desde los campos de texto
-             productName = textFieldNameProduct.getText();
-                productStock = Integer.parseInt(textFieldProductStock.getText());
 
-                    // Llamar al método de la tienda para agregar stock al producto
-                    shop.addStockToProduct(productName, productStock);
+                case 3: // Añadir stock
+                    if (!productName.isEmpty() && !productStockText.isEmpty()) {
+                        try {
+                            int productStock = Integer.parseInt(productStockText);
+                            Product product = shop.findProduct(productName);
+                            if (product != null) {
+                                product.setStock(product.getStock() + productStock);
+                                JOptionPane.showMessageDialog(this, "Stock actualizado", "Información", JOptionPane.INFORMATION_MESSAGE);
+                                dispose();
+                            } else {
+                                JOptionPane.showMessageDialog(this, "El producto no existe en el inventario", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(this, "El stock debe ser un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "El nombre del producto y el stock no pueden estar vacios", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                     break;
-                   
-                case 9: 
-                	
+
+                case 9: // Eliminar producto
+                    if (!productName.isEmpty()) {
+                        Product product = shop.findProduct(productName);
+                        if (product != null) {
+                            shop.removeProduct(productName);
+                            JOptionPane.showMessageDialog(this, "Producto eliminado ", "Información", JOptionPane.INFORMATION_MESSAGE);
+                            dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "El producto no existe en el inventario", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "El nombre del producto debe estar completo", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    break;
+
                 default:
                     break;
             }
         }
     }
 }
-
-            /*switch (option) {
-                case 2: // Añadir producto
-                    if (shop.findProduct(productName) == null) {
-                        shop.addProduct(productName, productStock, productPrice);
-                        JOptionPane.showMessageDialog(this, "Producto añadido exitosamente al inventario.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        dispose(); // Cerrar la ventana actual
-                    } else {
-                        JOptionPane.showMessageDialog(this, "El producto ya existe en el inventario.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    break;
-                case 3: // Añadir stock
-                    Product existingProduct = shop.findProduct(productName);
-                    if (existingProduct != null) {
-                        existingProduct.setStock(existingProduct.getStock() + productStock);
-                        JOptionPane.showMessageDialog(this, "Stock actualizado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        dispose(); // Cerrar la ventana actual
-                    } else {
-                        JOptionPane.showMessageDialog(this, "El producto no existe en el inventario.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    break;
-                case 9: // Eliminar producto
-                    Product productToRemove = shop.findProduct(productName);
-                    if (productToRemove != null) {
-                        shop.removeProduct(productToRemove); // Se debe pasar el producto a eliminar como argumento
-                        JOptionPane.showMessageDialog(this, "Producto eliminado exitosamente del inventario.", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        dispose(); // Cerrar la ventana actual
-                        shopView.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(this, "El producto no existe en el inventario.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-}*/
-
-
-	
+  

@@ -104,7 +104,9 @@ public class Shop {
 	                showSales();
 	                break;
 	            case 8:
-	                removeProduct();
+	                System.out.println("Ingrese el nombre del producto que desea eliminar:");
+	                String productNameToRemove = scanner.nextLine();
+	                removeProduct(productNameToRemove);
 	                break;
 	            case 9:
 	                // Agregar funcionalidad para ver venta total
@@ -362,30 +364,17 @@ public class Shop {
             System.out.println("Error al exportar los datos de ventas: " + var9.getMessage());
         }
     }
-
-    public void removeProduct(Product productToRemove) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Ingrese el nombre del producto que desea eliminar");
-        String nameRemove = scanner.next();
-        Product productRemove = null;
-        Iterator var5 = this.inventory.iterator();
-
-        while(var5.hasNext()) {
-            Product product = (Product)var5.next();
-            if (product.getName().equalsIgnoreCase(nameRemove)) {
-                productRemove = product;
-                break;
-            }
-        }
-
-        if (productRemove != null) {
-            this.inventory.remove(productRemove);
-            System.out.println("El producto \"" + nameRemove + "\" ha sido eliminado");
+    public void removeProduct(String productNameToRemove) {
+        Product productFound = findProduct(productNameToRemove);
+        if (productFound != null) {
+            inventory.remove(productFound);
+            System.out.println("El producto \"" + productNameToRemove + "\" ha sido eliminado del inventario.");
         } else {
-            System.out.println("El producto \"" + nameRemove + "\" no ha sido encontrado");
+            System.out.println("El producto \"" + productNameToRemove + "\" no ha sido encontrado en el inventario.");
         }
-
     }
+
+
 
    
     

@@ -1,6 +1,8 @@
 package view;
 
 import java.awt.EventQueue;
+import exception.LimitLoginException;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -81,31 +83,39 @@ public class LoginView extends JFrame implements ActionListener{
 
 	}
 	
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		  if (e.getSource() == btnNewButton) {
-	            Employee employee = new Employee();
-	            String username = textFieldUsername.getText();
-	            String password = textFieldPassword.getText();
-	            
+	    if (e.getSource() == btnNewButton) {
+	        Employee employee = new Employee();
+	        String username = textFieldUsername.getText();
+	        String password = textFieldPassword.getText();
+
+	        try {
 	            if (employee.login(Integer.valueOf(username), password)) {
 	                // Si las credenciales son correctas, abrir la ventana ShopView
 	                ShopView shopView = new ShopView();
 	                shopView.setVisible(true);
 	                dispose();
 	            } else {
-	                
 	                intentosLogin++;
 	                
-	                // Si se han realizado 3 intentos malos, mostrar un mensaje de error y cerrar la aplicación
+	                // Si se han realizado 3 intentos de error, lanzar la excepción
 	                if (intentosLogin >= 3) {
-	                    JOptionPane.showMessageDialog(this, "Haz alcanzado el número máximo de intentos. Cerrando la aplicación.", "Error", JOptionPane.ERROR_MESSAGE);
-	                    System.exit(0); 	                } else {
+	                    throw new LimitLoginException("Haz superado los tres intentos");
+	                } else {
 	                    // Si las credenciales son incorrectas pero no se han alcanzado los 3 intentos, mostrar un mensaje de error
-	                    JOptionPane.showMessageDialog(this, "Login incorrecto", "Error", JOptionPane.ERROR_MESSAGE);
+	                    JOptionPane.showMessageDialog(this, "ERROR: credenciales incorrectas :(", "Error", JOptionPane.ERROR_MESSAGE);
+	                    // limpiamos si las credenciales son incorrectas
+	                    textFieldUsername.setText("");
+	        	       textFieldPassword.setText("");
 	                }
 	            }
+	        } catch (LimitLoginException ex) {
+	            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	            System.exit(0); // Cerrar la aplicación
+	        } catch (NumberFormatException ex) {
+	            JOptionPane.showMessageDialog(this, "El nombre de usuario debe ser un número", "Error", JOptionPane.ERROR_MESSAGE);
 	        }
 	    }
 	}
+}
