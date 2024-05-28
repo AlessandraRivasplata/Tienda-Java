@@ -1,22 +1,44 @@
 package model;
-import main.Logable; 
+
+import main.Logable;
+import dao.Dao;
+import dao.DaoImplJDBC;
 
 public class Employee extends Person implements Logable {
     private int employeeId;
-    private static final int USER = 123;
-    private static final String PASSWORD = "test";
+    private String name; 
+    private Dao dao;
 
     public Employee() {
         super();
+        this.dao = new DaoImplJDBC();
     }
-    /*
-    public Employee(String name, int employeeId) {
-        super(name);
-        this.employeeId = employeeId;
-    }*/
 
     @Override
     public boolean login(int user, String password) {
-        return user == USER && password.equals(PASSWORD);
+        dao.connect();
+        Employee employee = dao.getEmployee(user, password);
+        dao.disconnect();
+        return employee != null;
     }
+
+    // Gets y Sets
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+        
+    public int getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(int employeeId) {
+        this.employeeId = employeeId;
+    }
+
+   
+    
 }
