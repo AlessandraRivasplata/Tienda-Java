@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import dao.DaoImplFile; // Importar DaoImplFile
 import main.Shop;
 
 import javax.swing.JLabel;
@@ -25,7 +26,9 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
     private JButton btnNewButtonAdd;
     private JButton btnNewButtonStock;
     private JButton btnNewButtonDelete;
+    private JButton btnNewButtonExportar;
     private Shop shop;
+    private DaoImplFile dao; // Declarar el objeto dao
 
     /**
      * Launch the application.
@@ -79,20 +82,21 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
         btnNewButtonDelete.setBounds(71, 174, 308, 29);
         contentPane.add(btnNewButtonDelete);
         btnNewButtonDelete.addActionListener(this);
-
-        contentPane.setFocusable(true);
+        
+        btnNewButtonExportar = new JButton("0. Exportar inventario");
+        btnNewButtonExportar.setBounds(71, 215, 308, 29);
+        contentPane.add(btnNewButtonExportar);
         contentPane.requestFocusInWindow();
+        btnNewButtonExportar.addActionListener(this);
         contentPane.addKeyListener(this);
-
-        // poner KeyListener a los botones
-        btnNewButtonCount.addKeyListener(this);
-        btnNewButtonAdd.addKeyListener(this);
-        btnNewButtonStock.addKeyListener(this);
-        btnNewButtonDelete.addKeyListener(this);
-
+        contentPane.setFocusable(true);
+        
         // Crear objeto Shop y cargar inventario
         shop = new Shop();
         shop.loadInventory();
+
+        // Inicializar DaoImplFile
+        dao = new DaoImplFile(shop); // Inicializa dao con el objeto shop
     }
 
     @Override
@@ -105,6 +109,8 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
             openProductView(3);
         } else if (e.getSource() == btnNewButtonDelete) {
             openProductView(9);
+        } else if (e.getSource() == btnNewButtonExportar) {
+            handleExportInventory();
         }
     }
 
@@ -119,29 +125,37 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
             openProductView(3);
         } else if (key == KeyEvent.VK_9) {
             openProductView(9);
+        } else if (key == KeyEvent.VK_0) {
+            handleExportInventory();
         }
     }
-
+    
     @Override
     public void keyTyped(KeyEvent e) {
-       
+        // No implementado
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        
+        // No implementado
+    }
+
+    private void handleExportInventory() {
+        boolean success = dao.writeInventory(shop.getInventory()); // Asegúrate de usar dao
+        if (success) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Inventario exportado con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Hubo un problema al exportar el inventario.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void openCashView() {
-        //  método para abrir la vista de contar caja
         CashView cashView = new CashView();
         cashView.setVisible(true);
     }
 
     public void openProductView(int option) {
-        //  método para abrir la vista de añadir producto,stock o eliminar producto
         ProductView productView = new ProductView(shop, option);
         productView.setVisible(true);
     }
 }
-

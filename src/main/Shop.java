@@ -7,12 +7,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import dao.Dao;
+import dao.DaoImplFile;
 
 import model.Client;
 import model.Employee;
@@ -21,15 +26,17 @@ import model.Sale;
 
 public class Shop {
     private double cash = 100.0;
-    private ArrayList<Product> inventory;
+    private List<Product> inventory;
     private ArrayList<Sale> sales;
     private static final String INVENTORY_FILE_PATH = "files/inputInventory.txt";
     static final double TAX_RATE = 1.04;
-
+    private Dao dao; // Atributo dao
     public Shop() {
         this.cash = 100.0;
         this.inventory = new ArrayList();
         this.sales = new ArrayList();
+       this.dao = new DaoImplFile(this); // Pasa el objeto Shop al constructor de DaoImplFile
+        loadInventory();
     }
     public static void main(String[] args) {
         Shop shop = new Shop();
@@ -83,7 +90,7 @@ public class Shop {
 	            switch (opcion) {
 	            case 1:
 	                showCash();
-	                System.out.println("Seleccionaste la opción 1.");
+	                System.out.println("Dinero actual:" + this.cash);
 	                break;
 	            case 2:
 	                addProduct();
@@ -121,7 +128,7 @@ public class Shop {
         } while (!exit);
     }
   
-    public void loadInventory() {
+    /*public void loadInventory() {
         try (BufferedReader br = new BufferedReader(new FileReader(INVENTORY_FILE_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -158,8 +165,60 @@ public class Shop {
         } catch (NumberFormatException e) {
             System.err.println("Error: El archivo de inventario contiene valores numéricos incorrectos. " + e.getMessage());
         }
+    }*/
+    /*public void loadInventory() {
+        try {
+            // Obtener lista de productos desde el DAO
+            List<Product> productList = dao.getInventory();
+            
+            // Limpiar inventario actual y añadir productos del DAO
+            this.inventory.clear();
+            this.inventory.addAll(productList);
+            
+            System.out.println("Inventario cargado con éxito:");
+            for (Product product : this.inventory) {
+                System.out.println(product);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al cargar el inventario: " + e.getMessage());
+        }
+    }*/
+    // Método modificado para leer el inventario
+    public void loadInventory() {
+        try {
+            // Aquí podrías leer desde un archivo y cargar el inventario en la variable "inventory" de Shop
+            List<Product> inventory = dao.getInventory(); // Invoca solo una vez a getInventory
+            setInventory(inventory); // Asigna el inventario leído a la variable de la tienda
+        } catch (Exception e) {
+            System.err.println("Error al cargar el inventario: " + e.getMessage());
+        }
     }
 
+
+// write inventory 
+    // Método para escribir el inventario en un archivo
+    public boolean writeInventory(List<Product> inventory) throws IOException {
+        // Ruta del archivo donde se guardará el inventario
+        String filePath = "inventario.txt"; 
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            for (Product product : inventory) {
+                writer.write(product.toString() + "\n"); // Escribir cada producto en el archivo
+            }
+        } catch (IOException e) {
+            throw new IOException("Error al escribir el archivo de inventario.", e);
+        }
+
+        return true;  // Devolver true si todo fue exitoso
+    }
+
+    public List<Product> getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(List<Product> inventory) {
+        this.inventory = inventory;
+    }
 
     public double showCash() {
        // System.out.println("Dinero actual:" + this.cash);
@@ -327,7 +386,7 @@ public class Shop {
         this.inventory.add(product);
     }
 
-    private void exportFile() {
+    public void exportFile() {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String fileName = "files/inputInventory.txt";
@@ -373,7 +432,35 @@ public class Shop {
             System.out.println("El producto \"" + productNameToRemove + "\" no ha sido encontrado en el inventario.");
         }
     }
+    /*public void exportInventory() {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String fileName = "files/inventory_" + LocalDate.now().format(formatter) + ".txt"; // Nombre del archivo
+            FileWriter writer = new FileWriter(fileName);
 
+            int productNumber = 1; // Contador de productos
+
+            // Iterar sobre el inventario y escribir en el archivo
+            for (Product product : this.inventory) {
+                if (product != null) {
+                    writer.write(productNumber + ";Product:" + product.getName() + ";Stock:" + product.getStock() + ";\n");
+                    productNumber++;
+                }
+            }
+
+            // Escribir el total de productos al final del archivo
+            writer.write("Numero total de productos:" + (productNumber - 1) + ";\n");
+
+            writer.close();
+            System.out.println("Inventario exportado correctamente al archivo: " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error al exportar los datos de inventario: " + e.getMessage());
+        }
+    }*/
+
+    public boolean exportInventory() {
+        return dao.writeInventory(inventory);  // Invoca al método de exportación
+    }
 
 
    
@@ -405,5 +492,6 @@ public class Shop {
             System.out.println("El producto '" + productName + "' no existe en el inventario.");
         }
     }
+   
 
 }
