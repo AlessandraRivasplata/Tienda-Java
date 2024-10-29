@@ -11,6 +11,17 @@ public class Product {
     static final double PUBLIC_PRICE_MULTIPLIER = 2.0;
     static double EXPIRATION_RATE = 0.6;
 
+    
+    public Product() {
+        this.id = totalProducts + 1;
+        this.name = "default";
+        this.wholesalerPrice = 0.0;
+        this.publicPrice = 0.0;
+        this.available = true;
+        this.stock = 0;
+        ++totalProducts;
+    }
+
     public Product(String name, double wholesalerPrice, boolean available, int stock) {
         this.id = totalProducts + 1;
         this.name = name;
@@ -85,8 +96,33 @@ public class Product {
         this.publicPrice = this.getPublicPrice() * EXPIRATION_RATE;
     }
 
-	public double getPrice() {
+    public double getPrice() {
+        return this.publicPrice; // assuming publicPrice is the price to return
+    }
+
+	public void setColor(String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		
+	}
+
+	public void setStorage(int parseInt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPrice(double parseDouble) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getColor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public char[] getStorage() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
+
