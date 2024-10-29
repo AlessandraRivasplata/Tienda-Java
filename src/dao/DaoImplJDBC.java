@@ -1,12 +1,14 @@
 package dao;
 
 import model.Employee;
+import model.Product;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class DaoImplJDBC implements Dao {
     private Connection connection; // OBJETO CONNECTION PARA GESTIONAR LA CONEXIÓNA A NUESTRA BASE DE DATOS
@@ -61,4 +63,18 @@ public class DaoImplJDBC implements Dao {
             e.printStackTrace();
         }
     }
+
+
+	@Override
+	public List<Product> getInventory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public boolean writeInventory(List<Product> inventory) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

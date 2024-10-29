@@ -6,7 +6,8 @@ import dao.DaoImplJDBC;
 
 public class Employee extends Person implements Logable {
     private int employeeId;
-    private String name; 
+    private String name;
+    private String password;  // Campo para la contraseña
     private Dao dao;
 
     public Employee() {
@@ -30,7 +31,7 @@ public class Employee extends Person implements Logable {
     public void setName(String name) {
         this.name = name;
     }
-        
+
     public int getEmployeeId() {
         return employeeId;
     }
@@ -39,6 +40,11 @@ public class Employee extends Person implements Logable {
         this.employeeId = employeeId;
     }
 
-   
-    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

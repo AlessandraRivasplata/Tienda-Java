@@ -1,0 +1,2 @@
+1;Product:qw2;Stock:12;
+Numero total de productos:1;

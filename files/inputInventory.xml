@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<products>
+    <product name="Manzana">
+        <wholesalerPrice currency="Euro">10.00</wholesalerPrice>
+        <stock>10</stock>
+    </product>
+    <product name="Fresa">
+        <wholesalerPrice currency="Euro">05.00</wholesalerPrice>
+        <stock>20</stock>
+    </product>
+</products>
+

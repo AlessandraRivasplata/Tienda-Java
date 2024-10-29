@@ -43,11 +43,12 @@ public class Shop {
         if (shop.initSession()) {
             shop.loadInventory();
             shop.showMenu();
+            shop.verifyInventoryLoad(); // Llamada para verificar carga del inventario
         } else {
             System.out.println("Credenciales incorrectas. Por favor, inténtelo de nuevo.");
         }
     }
-    
+
     public boolean initSession() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Inicio de sesión:");
@@ -128,61 +129,6 @@ public class Shop {
         } while (!exit);
     }
   
-    /*public void loadInventory() {
-        try (BufferedReader br = new BufferedReader(new FileReader(INVENTORY_FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(";");
-                String name = "", price = "", stock = "";
-                for (String part : parts) {
-                    String[] keyValue = part.split(":");
-                    switch (keyValue[0].trim()) {
-                        case "Wholesaler Price":
-                            price = keyValue[1].trim();
-                            break;
-                        case "Stock":
-                            stock = keyValue[1].trim();
-                            break;
-                        case "Product":
-                            name = keyValue[1].trim();
-                            break;
-                    }
-                }
-                // Validar que el nombre, el precio y el stock no estén vacíos
-                if (!name.isEmpty() && !price.isEmpty() && !stock.isEmpty()) {
-                    Product product = new Product(name, Double.parseDouble(price), true, Integer.parseInt(stock));
-                    this.inventory.add(product);
-                } else {
-                    System.err.println("");
-                }
-            }
-            System.out.println("Inventario cargado con éxito:");
-            for (Product product : this.inventory) {
-                System.out.println(product);
-            }
-        } catch (IOException e) {
-            System.err.println("Error al cargar el inventario: " + e.getMessage());
-        } catch (NumberFormatException e) {
-            System.err.println("Error: El archivo de inventario contiene valores numéricos incorrectos. " + e.getMessage());
-        }
-    }*/
-    /*public void loadInventory() {
-        try {
-            // Obtener lista de productos desde el DAO
-            List<Product> productList = dao.getInventory();
-            
-            // Limpiar inventario actual y añadir productos del DAO
-            this.inventory.clear();
-            this.inventory.addAll(productList);
-            
-            System.out.println("Inventario cargado con éxito:");
-            for (Product product : this.inventory) {
-                System.out.println(product);
-            }
-        } catch (Exception e) {
-            System.err.println("Error al cargar el inventario: " + e.getMessage());
-        }
-    }*/
     // Método modificado para leer el inventario
     public void loadInventory() {
         try {
@@ -385,44 +331,38 @@ public class Shop {
     public void addProduct(Product product) {
         this.inventory.add(product);
     }
-
     public void exportFile() {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String fileName = "files/inputInventory.txt";
-            FileWriter writer = new FileWriter(fileName, true);
+            String currentDate = LocalDate.now().format(formatter);
+            String directoryPath = "files";
+            String fileName = directoryPath + "/inputInventory_" + currentDate + ".txt";
+
+            FileWriter writer = new FileWriter(fileName, false); // Sobrescribe el archivo
             int saleNumber = 1;
-            Iterator var6 = this.sales.iterator();
 
-            while(true) {
-                Sale sale;
-                do {
-                    if (!var6.hasNext()) {
-                        writer.close();
-                        System.out.println("Datos de ventas exportados correctamente al archivo: " + fileName);
-                        return;
+            for (Sale sale : this.sales) {
+                if (sale != null) {
+                    writer.write("" + saleNumber + ";Client=" + sale.getClient() + ";Date=" + sale.getFormattedDateTime() + ";");
+                    writer.write("Products=");
+                    
+                    for (Product product : sale.getProducts()) {
+                        writer.write(product.getName() + "," + product.getPublicPrice() + "€;");
                     }
-
-                    sale = (Sale)var6.next();
-                } while(sale == null);
-
-                writer.write("" + saleNumber + ";Client=" + sale.getClient() + ";Date=" + sale.getFormattedDateTime() + ";");
-                writer.write("" + saleNumber + ";Products=");
-                Iterator var8 = sale.getProducts().iterator();
-
-                while(var8.hasNext()) {
-                    Product product = (Product)var8.next();
-                    String var10001 = product.getName();
-                    writer.write(var10001 + "," + product.getPublicPrice() + "€;");
+                    
+                    writer.write("Amount=" + sale.getAmount() + ";\n");
+                    saleNumber++;
                 }
-
-                writer.write("" + saleNumber + ";Amount=" + sale.getAmount() + ";\n");
-                ++saleNumber;
             }
-        } catch (IOException var9) {
-            System.out.println("Error al exportar los datos de ventas: " + var9.getMessage());
+
+            writer.close();
+            System.out.println("Datos de ventas exportados correctamente al archivo: " + fileName);
+        } catch (IOException e) {
+            System.out.println("Error al exportar los datos de ventas: " + e.getMessage());
         }
     }
+
+
     public void removeProduct(String productNameToRemove) {
         Product productFound = findProduct(productNameToRemove);
         if (productFound != null) {
@@ -432,36 +372,12 @@ public class Shop {
             System.out.println("El producto \"" + productNameToRemove + "\" no ha sido encontrado en el inventario.");
         }
     }
-    /*public void exportInventory() {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            String fileName = "files/inventory_" + LocalDate.now().format(formatter) + ".txt"; // Nombre del archivo
-            FileWriter writer = new FileWriter(fileName);
+   
 
-            int productNumber = 1; // Contador de productos
-
-            // Iterar sobre el inventario y escribir en el archivo
-            for (Product product : this.inventory) {
-                if (product != null) {
-                    writer.write(productNumber + ";Product:" + product.getName() + ";Stock:" + product.getStock() + ";\n");
-                    productNumber++;
-                }
-            }
-
-            // Escribir el total de productos al final del archivo
-            writer.write("Numero total de productos:" + (productNumber - 1) + ";\n");
-
-            writer.close();
-            System.out.println("Inventario exportado correctamente al archivo: " + fileName);
-        } catch (IOException e) {
-            System.out.println("Error al exportar los datos de inventario: " + e.getMessage());
-        }
-    }*/
-
-    public boolean exportInventory() {
+   /* public boolean exportInventory() {
         return dao.writeInventory(inventory);  // Invoca al método de exportación
     }
-
+*/
 
    
     
@@ -493,5 +409,18 @@ public class Shop {
         }
     }
    
+
+    // There is not UT to verify the inventory was loaded properly, e.g. it could be printed on console 
+    public void verifyInventoryLoad() {
+        loadInventory(); // Carga el inventario usando el método existente
+        if (inventory != null && !inventory.isEmpty()) {
+            System.out.println("Inventario cargado correctamente:");
+            for (Product product : inventory) {
+                System.out.println(product); // Imprime cada producto para verificar
+            }
+        } else {
+            System.out.println("Error: El inventario está vacío o no se pudo cargar.");
+        }
+    }
 
 }

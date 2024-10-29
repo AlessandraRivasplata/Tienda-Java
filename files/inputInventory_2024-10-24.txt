@@ -1,0 +1,2 @@
+1;Product:sergi;Stock:2;
+Numero total de productos:1;
