@@ -28,12 +28,13 @@ public class DomWriter {
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.newDocument();
         } catch (ParserConfigurationException e) {
-            System.out.println("Error al crear el documento XML: " + e.getMessage());
+            System.err.println("Error al crear el documento XML: " + e.getMessage());
         }
     }
 
     public void writeInventoryToXml(List<Product> products) {
-        Element root = document.createElement("inventory");
+        System.out.println("Iniciando la exportación del inventario a XML...");
+        Element root = document.createElement("products");
         document.appendChild(root);
 
         for (Product product : products) {
@@ -41,15 +42,15 @@ public class DomWriter {
             productElement.setAttribute("name", product.getName());
             root.appendChild(productElement);
 
-            Element priceElement = document.createElement("price");
+            Element priceElement = document.createElement("wholeSalerPrice");
             priceElement.setTextContent(String.valueOf(product.getPrice()));
             productElement.appendChild(priceElement);
 
             Element stockElement = document.createElement("stock");
-            stockElement.setAttribute("color", product.getColor());
-            stockElement.setAttribute("storage", String.valueOf(product.getStorage()));
             stockElement.setTextContent(String.valueOf(product.getStock()));
             productElement.appendChild(stockElement);
+
+            System.out.println("Producto exportado: " + product.getName() + " (Precio: " + product.getPrice() + ", Stock: " + product.getStock() + ")");
         }
 
         saveXmlToFile();
@@ -59,7 +60,7 @@ public class DomWriter {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             Source source = new DOMSource(document);
-            String filePath = "files/inputInventory_" + LocalDate.now() + ".xml";
+            String filePath = "xml/inputinventory" + LocalDate.now() + ".xml";
             File file = new File(filePath);
 
             file.getParentFile().mkdirs(); // Crear directorios si no existen
@@ -69,7 +70,8 @@ public class DomWriter {
 
             System.out.println("Inventario exportado correctamente a: " + filePath);
         } catch (IOException | TransformerException e) {
-            System.out.println("Error al guardar el inventario XML: " + e.getMessage());
+            System.err.println("Error al guardar el inventario XML: " + e.getMessage());
         }
     }
 }
+

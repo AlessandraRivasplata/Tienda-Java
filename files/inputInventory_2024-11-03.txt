@@ -1,0 +1,2 @@
+3;Product:aaaa;Stock:12;
+Numero total de productos:1;

@@ -18,7 +18,7 @@ import java.util.Scanner;
 
 import dao.Dao;
 import dao.DaoImplFile;
-
+import dao.DaoImplXml;
 import model.Client;
 import model.Employee;
 import model.Product;
@@ -28,16 +28,18 @@ public class Shop {
     private double cash = 100.0;
     private List<Product> inventory;
     private ArrayList<Sale> sales;
-    private static final String INVENTORY_FILE_PATH = "files/inputInventory.txt";
+    private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
     static final double TAX_RATE = 1.04;
     private Dao dao; // Atributo dao
+ 
     public Shop() {
         this.cash = 100.0;
-        this.inventory = new ArrayList();
-        this.sales = new ArrayList();
-       this.dao = new DaoImplFile(this); // Pasa el objeto Shop al constructor de DaoImplFile
-        loadInventory();
+        this.inventory = new ArrayList<>();
+        this.sales = new ArrayList<>();
+        this.dao = new DaoImplXml("xml/inputinventory.xml");  
+        
     }
+    
     public static void main(String[] args) {
         Shop shop = new Shop();
         if (shop.initSession()) {
@@ -145,7 +147,7 @@ public class Shop {
     // Método para escribir el inventario en un archivo
     public boolean writeInventory(List<Product> inventory) throws IOException {
         // Ruta del archivo donde se guardará el inventario
-        String filePath = "inventario.txt"; 
+        String filePath = "inputinventory.xml"; 
 
         try (FileWriter writer = new FileWriter(filePath)) {
             for (Product product : inventory) {
@@ -373,15 +375,8 @@ public class Shop {
         }
     }
    
-
-   /* public boolean exportInventory() {
-        return dao.writeInventory(inventory);  // Invoca al método de exportación
-    }
-*/
-
-   
     
-    public Product findProduct(String name) {
+    /*public Product findProduct(String name) {
         Iterator var3 = this.inventory.iterator();
 
         while(var3.hasNext()) {
@@ -391,6 +386,20 @@ public class Shop {
             }
         }
 
+        return null;
+    }
+*/
+    public Product findProduct(String name) {
+        if (inventory == null) {
+            System.out.println("Inventario no cargado.");
+            return null;
+        }
+        for (Product product : inventory) {
+            if (product.getName().equalsIgnoreCase(name)) {
+                return product;
+            }
+        }
+        System.out.println("Producto no encontrado.");
         return null;
     }
 

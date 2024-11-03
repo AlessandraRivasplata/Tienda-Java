@@ -1,3 +1,0 @@
-Product:Manzana;Wholesaler Price:10.00;Stock:10; 
-Product:Fresa;Wholesaler Price:5.00;Stock:20;1;Client=Antonio;Date=0;1;Products=Manzana,20.0€;1;Amount=20.8;
-1;Client=Antonio;Date=0;1;Products=Manzana,20.0€;1;Amount=20.8;

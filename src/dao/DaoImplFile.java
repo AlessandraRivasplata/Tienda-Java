@@ -23,9 +23,9 @@ public class DaoImplFile implements Dao {
 
     @Override
     public List<Product> getInventory() {
-        // Directamente obtener el inventario de la tienda (sin llamar a loadInventory)
+       
         try {
-            // Solo carga una vez el inventario desde el archivo si es necesario, sin hacer llamadas circulares
+          
             return shop.getInventory(); 
         } catch (Exception e) {
             System.err.println("Error al obtener el inventario: " + e.getMessage());
@@ -37,8 +37,8 @@ public class DaoImplFile implements Dao {
     public boolean writeInventory(List<Product> inventory) {
         // Formar el nombre del archivo con la fecha actual
         LocalDate currentDate = LocalDate.now();
-        String directoryPath = "files";
-        String filename = directoryPath + "/inputInventory_" + currentDate.toString() + ".txt";
+        String directoryPath = "xml";
+        String filename = directoryPath + "/inputinventory_" + currentDate.toString() + ".xml";
 
         try {
             // Crear la carpeta si no existe
