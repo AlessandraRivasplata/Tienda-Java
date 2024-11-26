@@ -1,31 +1,38 @@
 package model;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "product") // La raíz de cada producto en el XML
-@XmlType(propOrder = {"id", "name", "available", "wholesalerPrice", "publicPrice", "stock"})
+@XmlRootElement(name="product")
+@XmlType(propOrder= {"id", "name", "available", "wholesalerPrice", "publicPrice", "stock"})
 public class Product {
-
     private int id;
     private String name;
-    private boolean available;
-    private Amount wholesalerPrice;
     private Amount publicPrice;
+    private Amount wholesalerPrice;
+    private boolean available;
     private int stock;
+    private static int totalProducts = 0;
 
-    public Product(String productName, double productPrice, boolean b, int productStock) {
-		// TODO Auto-generated constructor stub
-	}
+    static double EXPIRATION_RATE = 0.60;
 
-	public Product() {
-		// TODO Auto-generated constructor stub
-	}
+    public Product(String name, double wholesalerPrice, boolean available, int stock) {
+        this.id = ++totalProducts; // Aseguramos IDs únicos
+        this.name = name;
+        this.wholesalerPrice = new Amount(wholesalerPrice);
+        this.available = available;
+        this.stock = stock;
+        this.publicPrice = new Amount(wholesalerPrice * 2);  // Precio público calculado
+    }
 
-	// Getters y setters
-    @XmlAttribute
+    public Product() {
+        this.id = ++totalProducts; // Constructor vacío con ID autogenerado
+        this.available = true;
+    }
+
+    @XmlAttribute(name="id")
     public int getId() {
         return id;
     }
@@ -34,7 +41,7 @@ public class Product {
         this.id = id;
     }
 
-    @XmlElement
+    @XmlAttribute(name="name")
     public String getName() {
         return name;
     }
@@ -43,25 +50,7 @@ public class Product {
         this.name = name;
     }
 
-    @XmlElement
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    @XmlElement
-    public Amount getWholesalerPrice() {
-        return wholesalerPrice;
-    }
-
-    public void setWholesalerPrice(Amount wholesalerPrice) {
-        this.wholesalerPrice = wholesalerPrice;
-    }
-
-    @XmlElement
+    @XmlElement(name="publicPrice")
     public Amount getPublicPrice() {
         return publicPrice;
     }
@@ -70,13 +59,41 @@ public class Product {
         this.publicPrice = publicPrice;
     }
 
-    @XmlElement
+    @XmlElement(name="wholesalerPrice")
+    public Amount getWholesalerPrice() {
+        return wholesalerPrice;
+    }
+
+    public void setWholesalerPrice(Amount wholesalerPrice) {
+        this.wholesalerPrice = wholesalerPrice;
+    }
+
+    @XmlElement(name="available")
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    @XmlElement(name="stock")
     public int getStock() {
         return stock;
     }
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public void expire() {
+        publicPrice.setValue(publicPrice.getValue() * EXPIRATION_RATE);
+    }
+
+    @Override
+    public String toString() {
+        return "Product [id=" + id + ", name=" + name + ", publicPrice=" + publicPrice.getValue() + publicPrice.getCurrency() +
+                ", wholesalerPrice=" + wholesalerPrice.getValue() + wholesalerPrice.getCurrency() + ", stock=" + stock + "]";
     }
 
 	public char[] getPrice() {
@@ -88,12 +105,6 @@ public class Product {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public void expire() {
-		// TODO Auto-generated method stub
-		
-	}
 }
-
 
 

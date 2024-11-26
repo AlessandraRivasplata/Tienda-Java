@@ -1,34 +1,37 @@
 package model;
 
+import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "products")  // El nodo raíz en el XML es <products>
+@XmlRootElement(name = "products")  // Define el nombre de la raíz del XML
 public class ProductList {
-
+    
     private int total;
-    private List<Product> products;
-
-    // Constructor
+    private ArrayList<Product> products = new ArrayList<>();  // Lista de productos
+    
+    // Constructor por defecto (necesario para JAXB)
     public ProductList() {}
-
-    public ProductList(List<Product> products, int total) {
+    
+    // Constructor con parámetros
+    public ProductList(ArrayList<Product> products, int total) {
         this.products = products;
         this.total = total;
     }
 
-    @XmlElement(name = "product")  // Cada producto se etiqueta como <product>
-    public List<Product> getProducts() {
+    // Getter y setter para 'products'
+    @XmlElement(name = "product")  // 'product' será el nombre de cada elemento en la lista
+    public ArrayList<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(ArrayList<Product> products) {
         this.products = products;
     }
 
-    @XmlAttribute
+    // Getter y setter para 'total'
+    @XmlAttribute(name = "total")  // 'total' será un atributo del elemento raíz
     public int getTotal() {
         return total;
     }
@@ -37,3 +40,4 @@ public class ProductList {
         this.total = total;
     }
 }
+
