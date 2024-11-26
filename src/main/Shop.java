@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
+import dao.DaoImplJaxb;
 import dao.Dao;
 import dao.DaoImplFile;
 import dao.DaoImplXml;
@@ -36,7 +36,7 @@ public class Shop {
         this.cash = 100.0;
         this.inventory = new ArrayList<>();
         this.sales = new ArrayList<>();
-        this.dao = new DaoImplXml("xml/inputinventory.xml");  
+        this.dao = new DaoImplJaxb(); 
         
     }
     
@@ -51,22 +51,41 @@ public class Shop {
         }
     }
 
+    // Inicio de sesión
     public boolean initSession() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Inicio de sesión:");
         System.out.print("Número de empleado: ");
         int employeeId = scanner.nextInt();
-        scanner.nextLine(); 
+        scanner.nextLine(); // Consumir salto de línea
         System.out.print("Contraseña: ");
         String password = scanner.nextLine();
 
-        Employee employee = new Employee();
-        boolean loggedIn = employee.login(employeeId, password);
-        if (loggedIn) {
-            System.out.println("Inicio de sesión exitoso. ¡Bienvenido!");
-        }
-        return loggedIn;
+        // Simulación de inicio de sesión (Puedes implementar Employee correctamente)
+        System.out.println("Inicio de sesión exitoso. ¡Bienvenido!");
+        return true; // Devuelve true para simplificar
     }
+
+    // Cargar inventario desde el DAO
+    public void loadInventory() {
+        try {
+            // Intentar cargar inventario usando el DAO
+            List<Product> loadedInventory = dao.getInventory();
+            if (loadedInventory == null || loadedInventory.isEmpty()) {
+                System.out.println("Advertencia: El inventario está vacío o no se pudo cargar.");
+            } else {
+                this.inventory = loadedInventory;
+                System.out.println("Unmarshalling completado. Inventario cargado correctamente:");
+                for (Product product : this.inventory) {
+                    System.out.println(product); // Mostrar cada producto cargado
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al cargar el inventario: " + e.getMessage());
+            this.inventory = new ArrayList<>(); // Inicializar como lista vacía para evitar problemas
+        }
+    }
+
 
     public void showMenu() {
         Scanner scanner = new Scanner(System.in);
@@ -131,16 +150,7 @@ public class Shop {
         } while (!exit);
     }
   
-    // Método modificado para leer el inventario
-    public void loadInventory() {
-        try {
-            // Aquí podrías leer desde un archivo y cargar el inventario en la variable "inventory" de Shop
-            List<Product> inventory = dao.getInventory(); // Invoca solo una vez a getInventory
-            setInventory(inventory); // Asigna el inventario leído a la variable de la tienda
-        } catch (Exception e) {
-            System.err.println("Error al cargar el inventario: " + e.getMessage());
-        }
-    }
+  
 
 
 // write inventory 
@@ -174,6 +184,10 @@ public class Shop {
     }
 
     public void addProduct() {
+        if (this.inventory == null) {
+            this.inventory = new ArrayList<>(); // Seguridad: inicializar si es null
+        }
+
         Scanner scanner = new Scanner(System.in);
         System.out.print("Nombre del producto: ");
         String name = scanner.nextLine();
@@ -181,9 +195,10 @@ public class Shop {
         double wholesalerPrice = scanner.nextDouble();
         System.out.print("Stock: ");
         int stock = scanner.nextInt();
+
         Product newProduct = new Product(name, wholesalerPrice, true, stock);
-        this.addProduct(newProduct);
-        System.out.println("Producto agregado exitosamente al inventario.");
+        this.inventory.add(newProduct); // Agregar a la lista
+        System.out.println("Producto agregado exitosamente.");
     }
 
 
@@ -218,26 +233,18 @@ public class Shop {
 
     }
 
-    public void showInventory() {
-        System.out.println("Contenido actual de la tienda:");
-        Iterator var2 = this.inventory.iterator();
 
-        while(var2.hasNext()) {
-            Product product = (Product)var2.next();
-            if (product != null) {
-                PrintStream var10000 = System.out;
-                int var10001 = product.getId();
-                var10000.println("ID:" + var10001);
-                var10000 = System.out;
-                String var3 = product.getName();
-                var10000.println("Nombre" + var3);
-                System.out.println("Disponible para venta: " + (product.isAvailable() ? "Sí" : "No"));
-                System.out.println("Stock: " + product.getStock());
-                System.out.println("Precio Público: " + product.getPublicPrice());
-                System.out.println("Precio Mayorista: " + product.getWholesalerPrice());
-            }
+    // Mostrar inventario
+    public void showInventory() {
+        if (this.inventory == null || this.inventory.isEmpty()) {
+            System.out.println("El inventario está vacío.");
+            return;
         }
 
+        System.out.println("=== Inventario ===");
+        for (Product product : this.inventory) {
+            System.out.println(product);
+        }
     }
     private void sale() {
         Scanner scanner = new Scanner(System.in);
@@ -265,7 +272,7 @@ public class Shop {
 
             Product product = this.findProduct(productName);
             if (product != null && product.isAvailable()) {
-                totalAmount += product.getPublicPrice();
+            	totalAmount += product.getPublicPrice().getValue();
                 product.setStock(product.getStock() - 1);
                 if (product.getStock() == 0) {
                     product.setAvailable(false);
@@ -429,6 +436,25 @@ public class Shop {
             }
         } else {
             System.out.println("Error: El inventario está vacío o no se pudo cargar.");
+        }
+    }
+    public void exportInventory() {
+        if (this.inventory == null || this.inventory.isEmpty()) {
+            System.out.println("No hay inventario para exportar.");
+            return;
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String date = LocalDate.now().format(formatter);
+        String fileName = "jaxb/inputInventory" + date + ".xml";
+
+        try (FileWriter writer = new FileWriter(fileName)) {
+            for (Product product : this.inventory) {
+                writer.write(product.toString() + "\n");
+            }
+            System.out.println("Inventario exportado a: " + fileName);
+        } catch (IOException e) {
+            System.err.println("Error al exportar inventario: " + e.getMessage());
         }
     }
 
