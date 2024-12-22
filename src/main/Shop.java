@@ -18,6 +18,7 @@ import java.util.Scanner;
 import dao.DaoImplJaxb;
 import dao.Dao;
 import dao.DaoImplFile;
+import dao.DaoImplJDBC;
 import dao.DaoImplXml;
 import model.Client;
 import model.Employee;
@@ -31,12 +32,13 @@ public class Shop {
     private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
     static final double TAX_RATE = 1.04;
     private Dao dao; // Atributo dao
- 
+    private DaoImplJDBC daoJdbc;
+    
     public Shop() {
         this.cash = 100.0;
         this.inventory = new ArrayList<>();
         this.sales = new ArrayList<>();
-        this.dao = new DaoImplJaxb(); 
+        this.dao = new DaoImplJDBC(); 
         
     }
     

@@ -1,25 +1,16 @@
 package dao;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 import model.Employee;
 import model.Product;
-
+import java.util.List;
 
 public interface Dao {
-   
     void connect();
     void disconnect();
-
-    // Método para obtener un empleado por su ID y contraseña, devuelve un objeto Employee
     Employee getEmployee(int employeeId, String password);
-    // Método que devuelve la lista de productos (inventario)
-    List<Product> getInventory() throws ParserConfigurationException, SAXException, IOException; 
-    // Método que recibe la lista de productos (inventario) y devuelve un booleano indicando éxito o error
+    List<Product> getInventory();
+    void addProduct(Product product);
+    void updateProduct(Product product);
+    void deleteProduct(Product product);
     boolean writeInventory(List<Product> inventory);
 }
