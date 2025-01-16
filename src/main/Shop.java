@@ -29,16 +29,16 @@ public class Shop {
     private double cash = 100.0;
     private List<Product> inventory;
     private ArrayList<Sale> sales;
-    private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
+    //private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
     static final double TAX_RATE = 1.04;
-    private Dao dao; // Atributo dao
-    private DaoImplJDBC daoJdbc;
+    private Dao dao =new DaoImplJDBC(); // Atributo dao
+   
     
     public Shop() {
         this.cash = 100.0;
         this.inventory = new ArrayList<>();
         this.sales = new ArrayList<>();
-        this.dao = new DaoImplJDBC(); 
+        
         
     }
     
@@ -62,13 +62,11 @@ public class Shop {
         scanner.nextLine(); // Consumir salto de línea
         System.out.print("Contraseña: ");
         String password = scanner.nextLine();
-
-        // Simulación de inicio de sesión (Puedes implementar Employee correctamente)
         System.out.println("Inicio de sesión exitoso. ¡Bienvenido!");
-        return true; // Devuelve true para simplificar
+        return true; 
     }
 
-    // Cargar inventario desde el DAO
+    /* Cargar inventario desde el DAO
     public void loadInventory() {
         try {
             // Intentar cargar inventario usando el DAO
@@ -87,7 +85,12 @@ public class Shop {
             this.inventory = new ArrayList<>(); // Inicializar como lista vacía para evitar problemas
         }
     }
-
+*/
+    public void loadInventory() {
+		dao.connect();
+		setInventory(dao.getInventory());
+		dao.disconnect();
+	}
 
     public void showMenu() {
         Scanner scanner = new Scanner(System.in);
@@ -155,8 +158,8 @@ public class Shop {
   
 
 
-// write inventory 
-    // Método para escribir el inventario en un archivo
+/* write inventory 
+    
     public boolean writeInventory(List<Product> inventory) throws IOException {
         // Ruta del archivo donde se guardará el inventario
         String filePath = "inputinventory.xml"; 
@@ -171,10 +174,14 @@ public class Shop {
 
         return true;  // Devolver true si todo fue exitoso
     }
-
-    public List<Product> getInventory() {
-        return inventory;
+*/
+    public boolean writeInventory() {
+        dao.connect();
+        boolean isExported = dao.writeInventory(new ArrayList<>(inventory));
+        dao.disconnect();
+        return isExported;
     }
+
 
     public void setInventory(List<Product> inventory) {
         this.inventory = inventory;
@@ -185,22 +192,22 @@ public class Shop {
     	 return this.cash;
     }
 
+    // add product for console
     public void addProduct() {
-        if (this.inventory == null) {
-            this.inventory = new ArrayList<>(); // Seguridad: inicializar si es null
-        }
-
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Nombre del producto: ");
+        System.out.print("Nombre: ");
         String name = scanner.nextLine();
         System.out.print("Precio mayorista: ");
         double wholesalerPrice = scanner.nextDouble();
         System.out.print("Stock: ");
         int stock = scanner.nextInt();
 
-        Product newProduct = new Product(name, wholesalerPrice, true, stock);
-        this.inventory.add(newProduct); // Agregar a la lista
-        System.out.println("Producto agregado exitosamente.");
+        Product exist = findProduct(name);
+        if (exist == null) {
+            addProduct(new Product(name, wholesalerPrice, true, stock));  
+        } else {
+            System.out.println("El Producto que estas intentado añadir ya existe");
+        }
     }
 
 
@@ -338,10 +345,8 @@ public class Shop {
         }
 
     }
-
-    public void addProduct(Product product) {
-        this.inventory.add(product);
-    }
+// add product for console
+    
     public void exportFile() {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -373,11 +378,12 @@ public class Shop {
         }
     }
 
-
+// delete product
     public void removeProduct(String productNameToRemove) {
         Product productFound = findProduct(productNameToRemove);
         if (productFound != null) {
             inventory.remove(productFound);
+            deleteProduc(productFound);
             System.out.println("El producto \"" + productNameToRemove + "\" ha sido eliminado del inventario.");
         } else {
             System.out.println("El producto \"" + productNameToRemove + "\" no ha sido encontrado en el inventario.");
@@ -459,5 +465,36 @@ public class Shop {
             System.err.println("Error al exportar inventario: " + e.getMessage());
         }
     }
+    public List<Product> getInventory() {
+        return inventory;
+    }
+    // add product to inventory
+    
+    public void addProduct(Product product) {
+        inventory.add(product);
+        dao.connect(); 
+        dao.addProduct(product); 
+        dao.disconnect(); 
+        System.out.println("Producto agregado al inventario");
+    }
+
+	private void createProduct(Product product) {
+		dao.connect();
+		dao.addProduct(product);
+		dao.disconnect();
+	}
+
+	private void updateProduct(Product product) {
+		dao.connect();
+		dao.updateProduct(product);
+		dao.disconnect();
+	}
+
+	private void deleteProduc(Product product) {
+		dao.connect();
+		dao.deleteProduct(product);
+		dao.disconnect();
+	}
+    
 
 }
