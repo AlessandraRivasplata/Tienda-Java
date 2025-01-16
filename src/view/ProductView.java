@@ -160,6 +160,7 @@ public class ProductView extends JDialog implements ActionListener {
                             Product product = shop.findProduct(productName);
                             if (product != null) {
                                 product.setStock(product.getStock() + productStock);
+                                shop.updateProduct(product);
                                 JOptionPane.showMessageDialog(this, "Stock actualizado", "Información", JOptionPane.INFORMATION_MESSAGE);
                                 dispose();
                             } else {

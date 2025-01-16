@@ -27,7 +27,7 @@ import model.Sale;
 
 public class Shop {
     private double cash = 100.0;
-    private List<Product> inventory;
+    private ArrayList<Product> inventory;
     private ArrayList<Sale> sales;
     //private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
     static final double TAX_RATE = 1.04;
@@ -175,15 +175,9 @@ public class Shop {
         return true;  // Devolver true si todo fue exitoso
     }
 */
-    public boolean writeInventory() {
-        dao.connect();
-        boolean isExported = dao.writeInventory(new ArrayList<>(inventory));
-        dao.disconnect();
-        return isExported;
-    }
+  
 
-
-    public void setInventory(List<Product> inventory) {
+    public void setInventory(ArrayList<Product> inventory) {
         this.inventory = inventory;
     }
 
@@ -210,7 +204,7 @@ public class Shop {
         }
     }
 
-
+// stock by console
     public void addStock() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Seleccione un nombre de producto: ");
@@ -220,6 +214,7 @@ public class Shop {
             System.out.print("Seleccione la cantidad a añadir: ");
             int stock = scanner.nextInt();
             product.setStock(product.getStock() + stock);
+            updateProduct(product);
             System.out.println("Se ha añadido " + stock + "unidades al stock del producto" + name);
             System.out.println("El stock del producto " + name + " ha sido actualizado a " + product.getStock());
         } else {
@@ -345,7 +340,7 @@ public class Shop {
         }
 
     }
-// add product for console
+
     
     public void exportFile() {
         try {
@@ -419,7 +414,7 @@ public class Shop {
     }
 
   
-    public void addStockToProduct(String productName, int additionalStock) {
+    /*public void addStockToProduct(String productName, int additionalStock) {
         // Buscar el producto en el inventario
         Product existingProduct = findProduct(productName);
         
@@ -427,12 +422,13 @@ public class Shop {
             // Si el producto existe, actualizar su stock
             existingProduct.setStock(existingProduct.getStock() + additionalStock);
             System.out.println("Stock del producto '" + productName + "' actualizado a: " + existingProduct.getStock());
+            updateProduct(existingProduct);
         } else {
             // Si el producto no existe, mostrar un mensaje de error
             System.out.println("El producto '" + productName + "' no existe en el inventario.");
         }
     }
-   
+   */
 
     // There is not UT to verify the inventory was loaded properly, e.g. it could be printed on console 
     public void verifyInventoryLoad() {
@@ -446,7 +442,7 @@ public class Shop {
             System.out.println("Error: El inventario está vacío o no se pudo cargar.");
         }
     }
-    public void exportInventory() {
+   /* public void exportInventory() {
         if (this.inventory == null || this.inventory.isEmpty()) {
             System.out.println("No hay inventario para exportar.");
             return;
@@ -464,8 +460,29 @@ public class Shop {
         } catch (IOException e) {
             System.err.println("Error al exportar inventario: " + e.getMessage());
         }
+    }*/
+    public void exportInventory() {
+        if (this.inventory == null || this.inventory.isEmpty()) {
+            System.out.println("No hay inventario para exportar.");
+            return;
+        }
+
+        boolean isExported = dao.writeInventory(this.inventory);  // Usamos el método de Dao para exportar a la base de datos
+        if (isExported) {
+            System.out.println("Inventario exportado correctamente a la base de datos.");
+        } else {
+            System.out.println("Error al exportar el inventario.");
+        }
     }
-    public List<Product> getInventory() {
+    public boolean writeInventory() {
+		dao.connect();
+		boolean isExported = dao.writeInventory(inventory);
+		dao.disconnect();
+		return isExported;
+	}
+
+
+    public ArrayList<Product> getInventory() {
         return inventory;
     }
     // add product to inventory
@@ -478,23 +495,21 @@ public class Shop {
         System.out.println("Producto agregado al inventario");
     }
 
-	private void createProduct(Product product) {
-		dao.connect();
-		dao.addProduct(product);
-		dao.disconnect();
-	}
+	
 
-	private void updateProduct(Product product) {
+	public void updateProduct(Product product) {
 		dao.connect();
 		dao.updateProduct(product);
 		dao.disconnect();
+		 System.out.println("Stock actualizado en  el inventario");
 	}
 
 	private void deleteProduc(Product product) {
 		dao.connect();
 		dao.deleteProduct(product);
 		dao.disconnect();
+		System.out.println("Producto eliminado en  el inventario");
 	}
-    
+	
 
 }

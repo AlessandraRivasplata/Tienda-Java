@@ -104,17 +104,22 @@ public class DaoImplJDBC implements Dao {
 
     @Override
     public void updateProduct(Product product) {
-        String updateQuery = "UPDATE inventory SET stock = ? WHERE name = ?";
-        try (PreparedStatement psUpdate = connection.prepareStatement(updateQuery)) {
-            psUpdate.setInt(1, product.getStock());
-            psUpdate.setString(2, product.getName());
-            psUpdate.executeUpdate();
-            System.out.println("Producto actualizado correctamente.");
+        String query = "UPDATE inventory SET stock = ? WHERE name = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, product.getStock());
+            ps.setString(2, product.getName());
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Producto actualizado correctamente.");
+            } else {
+                System.out.println("No se encontró el producto para actualizar.");
+            }
         } catch (SQLException e) {
             System.out.println("Error al actualizar el producto: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
 
     @Override
     public void deleteProduct(Product product) {
@@ -137,7 +142,7 @@ public class DaoImplJDBC implements Dao {
     @Override
     public boolean writeInventory(ArrayList<Product> product) {
         String query = "INSERT INTO historical_inventory (id_product, name, wholesalerPrice, available, stock, created_at) "
-                        + "VALUES (?, ?, ?, ?, ?, NOW())";
+                     + "VALUES (?, ?, ?, ?, ?, NOW())";
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             for (Product prod : product) {
@@ -150,14 +155,17 @@ public class DaoImplJDBC implements Dao {
                 ps.addBatch(); // Añadir al batch
             }
 
-            int[] affectedRows = ps.executeBatch();
+            int[] affectedRows = ps.executeBatch();  // Ejecutar todas las inserciones en batch
+            System.out.println("Productos insertados: " + affectedRows.length);
+
             return affectedRows.length == product.size();  // Verificar si el número de filas afectadas es correcto
         } catch (SQLException e) {
-            System.out.println("Error inserting data into historical_inventory: " + e.getMessage());
+            System.out.println("Error al insertar en historical_inventory: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
+
 
 
 }

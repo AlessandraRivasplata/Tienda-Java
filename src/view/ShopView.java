@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -141,13 +142,16 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
     }
 
     private void handleExportInventory() {
-        boolean success = dao.writeInventory(shop.getInventory()); // Asegúrate de usar dao
+        ArrayList<Product> productList = new ArrayList<>(shop.getInventory()); // Convertir List<Product> a ArrayList<Product>
+        boolean success = dao.writeInventory(productList);  // Llamar a writeInventory con el ArrayList<Product>
+        
         if (success) {
             javax.swing.JOptionPane.showMessageDialog(this, "Inventario exportado con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Hubo un problema al exportar el inventario.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     public void openCashView() {
         CashView cashView = new CashView();

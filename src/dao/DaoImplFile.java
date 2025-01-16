@@ -22,11 +22,11 @@ public class DaoImplFile implements Dao {
 
 
     @Override
-    public List<Product> getInventory() {
+    public ArrayList<Product> getInventory() {
        
         try {
           
-            return shop.getInventory(); 
+            return (ArrayList<Product>) shop.getInventory(); 
         } catch (Exception e) {
             System.err.println("Error al obtener el inventario: " + e.getMessage());
             return new ArrayList<>();  // Devolver una lista vacía en caso de error
@@ -34,7 +34,7 @@ public class DaoImplFile implements Dao {
     }
 
 
-    public boolean writeInventory(List<Product> inventory) {
+    public boolean writeInventory(ArrayList<Product> inventory) {
         // Formar el nombre del archivo con la fecha actual
         LocalDate currentDate = LocalDate.now();
         String directoryPath = "xml";
@@ -77,4 +77,28 @@ public class DaoImplFile implements Dao {
     public void disconnect() {
         
     }
+
+
+
+	@Override
+	public void addProduct(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void updateProduct(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void deleteProduct(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
 }
