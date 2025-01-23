@@ -31,7 +31,7 @@ public class DaoImplJaxb implements Dao {
     }
 
     @Override
-    public List<Product> getInventory() {
+    public ArrayList<Product> getInventory() {
         // Utilizamos JAXB para leer el archivo XML y obtener el inventario
         try {
             File file = new File("jaxb/inputInventory.xml");  // Ruta al archivo XML
@@ -56,7 +56,7 @@ public class DaoImplJaxb implements Dao {
     }
 
     @Override
-    public boolean writeInventory(List<Product> inventory) {
+    public boolean writeInventory(ArrayList<Product> inventory) {
         // Lógica para guardar el inventario en un archivo XML
         return false;  // Este método puede ser implementado si lo necesitas
     }

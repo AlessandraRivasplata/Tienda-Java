@@ -31,15 +31,15 @@ public class DaoImplXml implements Dao {
     }
 
     @Override
-    public List<Product> getInventory() {
+    public ArrayList<Product> getInventory() {
         SaxReader saxReader = new SaxReader();
         saxReader.parse("xml/inputinventory.xml");  // Cargar desde el archivo especificado
         List<Product> products = saxReader.getProducts();
-        return (products != null) ? products : new ArrayList<>();
+        return (products != null) ? (ArrayList<Product>) products : new ArrayList<>();
     }
 
     @Override
-    public boolean writeInventory(List<Product> inventory) {
+    public boolean writeInventory(ArrayList<Product> inventory) {
         try {
             DomWriter domWriter = new DomWriter();
             domWriter.writeInventoryToXml(inventory);

@@ -7,11 +7,19 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
+			  <!--<groupId>mysql</groupId>-->
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.25</version>
 			<scope>runtime</scope>
 		</dependency>
+		
+	 <!-- HIBERNATE -->
+<dependency>
+	 <groupId>org.hibernate</groupId>
+	 <artifactId>hibernate-core</artifactId>
+	 <version>5.4.10.Final</version>
+</dependency>
 	
 <dependency>
 <groupId>javax.xml.bind</groupId>
