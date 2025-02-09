@@ -1,5 +1,6 @@
 package model;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -7,17 +8,37 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name="product")
 @XmlType(propOrder= {"id", "name", "available", "wholesalerPrice", "publicPrice", "stock"})
+@Entity // Indica que esta clase es una entidad JPA
+@Table(name = "inventory") // Relaciona la clase con la tabla "inventory"
 public class Product {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincrementa el ID
     private int id;
+    
+    @Column(name = "name") // Relaciona el atributo "name" con la columna "name" de la tabla
     private String name;
-    private Amount publicPrice;
+    
+    @Column(name = "wholesalerPrice")
+    @Convert(converter = AmountConverter.class)  // Usamos el conversor de Amount a Double
     private Amount wholesalerPrice;
+    
+    @Column(name = "publicPrice")
+    @Convert(converter = AmountConverter.class)  // Usamos el conversor de Amount a Double
+    private Amount publicPrice;
+    
+    @Column(name = "available") // Relaciona el atributo "available" con la columna "available"
     private boolean available;
+    
+    @Column(name = "stock") // Relaciona el atributo "stock" con la columna "stock"
     private int stock;
+
+    @Transient // Este atributo no será mapeado a una columna de la tabla
     private static int totalProducts = 0;
 
     static double EXPIRATION_RATE = 0.60;
-
+    
+    // Constructor de la clase
     public Product(String name, double wholesalerPrice, boolean available, int stock) {
         this.id = ++totalProducts; // Aseguramos IDs únicos
         this.name = name;
@@ -95,16 +116,5 @@ public class Product {
         return "Product [id=" + id + ", name=" + name + ", publicPrice=" + publicPrice.getValue() + publicPrice.getCurrency() +
                 ", wholesalerPrice=" + wholesalerPrice.getValue() + wholesalerPrice.getCurrency() + ", stock=" + stock + "]";
     }
-
-	public char[] getPrice() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void setPrice(double parseDouble) {
-		// TODO Auto-generated method stub
-		
-	}
 }
-
 

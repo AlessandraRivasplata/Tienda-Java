@@ -18,6 +18,7 @@ import java.util.Scanner;
 import dao.DaoImplJaxb;
 import dao.Dao;
 import dao.DaoImplFile;
+import dao.DaoImplHibernate;
 import dao.DaoImplJDBC;
 import dao.DaoImplXml;
 import model.Client;
@@ -31,8 +32,8 @@ public class Shop {
     private ArrayList<Sale> sales;
     //private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
     static final double TAX_RATE = 1.04;
-    private Dao dao =new DaoImplJDBC(); // Atributo dao
-   
+    //private Dao dao =new DaoImplJDBC(); // Atributo dao
+    private Dao dao = new DaoImplHibernate();
     
     public Shop() {
         this.cash = 100.0;
@@ -375,18 +376,28 @@ public class Shop {
 
 // delete product
     public void removeProduct(String productNameToRemove) {
+        // Buscar el producto por nombre
         Product productFound = findProduct(productNameToRemove);
+        
         if (productFound != null) {
+            // Eliminar del inventario
             inventory.remove(productFound);
-            deleteProduc(productFound);
-            System.out.println("El producto \"" + productNameToRemove + "\" ha sido eliminado del inventario.");
+            
+            // Eliminar del inventario en la base de datos utilizando el id del producto
+            dao.deleteProduct(productFound.getId());
+            
+            
+            System.out.println("El producto \"" + productNameToRemove + "\" ha sido eliminado.");
         } else {
-            System.out.println("El producto \"" + productNameToRemove + "\" no ha sido encontrado en el inventario.");
+            System.out.println("El producto \"" + productNameToRemove + "\" no se encuentra en el inventario.");
         }
     }
+
    
     
-    /*public Product findProduct(String name) {
+  	
+
+	/*public Product findProduct(String name) {
         Iterator var3 = this.inventory.iterator();
 
         while(var3.hasNext()) {
@@ -504,12 +515,6 @@ public class Shop {
 		 System.out.println("Stock actualizado en  el inventario");
 	}
 
-	private void deleteProduc(Product product) {
-		dao.connect();
-		dao.deleteProduct(product);
-		dao.disconnect();
-		System.out.println("Producto eliminado en  el inventario");
-	}
 	
 
 }

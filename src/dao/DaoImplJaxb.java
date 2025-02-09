@@ -60,6 +60,24 @@ public class DaoImplJaxb implements Dao {
         // Lógica para guardar el inventario en un archivo XML
         return false;  // Este método puede ser implementado si lo necesitas
     }
+
+	@Override
+	public void addProduct(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateProduct(Product product) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteProduct(int productId) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 

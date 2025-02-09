@@ -21,6 +21,6 @@ public interface Dao {
 	
 	public void updateProduct(Product product);
 	
-	public void deleteProduct(Product product);
+	public void deleteProduct(int productId);
 
 }

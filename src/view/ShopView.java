@@ -11,7 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import dao.DaoImplFile; // Importar DaoImplFile
+//import dao.DaoImplFile; // Importar DaoImplFile
+import dao.DaoImplJDBC;  
 import main.Shop;
 
 import javax.swing.JLabel;
@@ -29,8 +30,8 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
     private JButton btnNewButtonDelete;
     private JButton btnNewButtonExportar;
     private Shop shop;
-    private DaoImplFile dao; // Declarar el objeto dao
-
+   // private DaoImplFile dao; // Declarar el objeto dao
+    private DaoImplJDBC dao; 
     /**
      * Launch the application.
      */
@@ -52,6 +53,9 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
      */
     public ShopView() {
         super("MiTienda.com - Menu principal");
+        this.dao = new DaoImplJDBC();  // Inicializa DaoImplJDBC
+        this.shop = new Shop();  // Inicializa la tienda
+        this.shop.loadInventory(); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
@@ -91,15 +95,8 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
         btnNewButtonExportar.addActionListener(this);
         contentPane.addKeyListener(this);
         contentPane.setFocusable(true);
-        
-        // Crear objeto Shop y cargar inventario
-        shop = new Shop();
-        shop.loadInventory();
-
-        // Inicializar DaoImplFile
-        dao = new DaoImplFile(shop); // Inicializa dao con el objeto shop
     }
-
+        
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnNewButtonCount) {
