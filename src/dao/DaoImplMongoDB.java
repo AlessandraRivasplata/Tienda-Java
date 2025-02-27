@@ -3,10 +3,13 @@ package dao;
 import java.util.ArrayList;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
 
 import model.Employee;
 import model.Product;
@@ -117,9 +120,36 @@ public class DaoImplMongoDB implements Dao {
 
 	@Override
 	public void updateProduct(Product product) {
-		// TODO Auto-generated method stub
-		
+	    Document updatedProductDoc = new Document("name", product.getName())
+	        .append("wholesalerPrice", new Document("value", product.getWholesalerPrice().getValue())
+	                                    .append("currency", product.getWholesalerPrice().getCurrency()))
+	        .append("publicPrice", new Document("value", product.getPublicPrice().getValue())
+	                                    .append("currency", product.getPublicPrice().getCurrency()))
+	        .append("available", product.isAvailable())
+	        .append("stock", product.getStock())
+	        .append("id", product.getId());
+	    
+	    var collection = database.getCollection("inventory");
+
+	    try {
+	        // Usamos un filtro para encontrar el producto por su id
+	        Bson filter = Filters.eq("id", product.getId());
+
+	        // Realizamos la actualización con el nuevo documento
+	        UpdateResult result = collection.updateOne(filter, new Document("$set", updatedProductDoc));
+
+	        // Verificar si la actualización fue buena
+	        if (result.getMatchedCount() > 0) {
+	            System.out.println("Producto actualizado correctamente: " + product.getName());
+	        } else {
+	            System.out.println("Producto no encontrado para actualizar: " + product.getName());
+	        }
+	    } catch (Exception e) {
+	        System.out.println("Error al actualizar el producto: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
+
 
 	@Override
 	public void deleteProduct(int productId) {
