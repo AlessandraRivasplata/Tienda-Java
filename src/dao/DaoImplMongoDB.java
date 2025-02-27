@@ -92,8 +92,10 @@ public class DaoImplMongoDB implements Dao {
 	public void addProduct(Product product) {
 	    // Crear un documento con los datos del producto
 	    Document productDoc = new Document("name", product.getName())
-	        .append("wholesalerPrice", new Document("value", product.getWholesalerPrice())
-	                                    .append("currency", "$"))
+	        .append("wholesalerPrice", new Document("value", product.getWholesalerPrice().getValue()) // Usar el valor directamente
+	                                    .append("currency", product.getWholesalerPrice().getCurrency())) // Usar la moneda directamente
+	        .append("publicPrice", new Document("value", product.getPublicPrice().getValue()) // Usar el valor directamente
+	                                    .append("currency", product.getPublicPrice().getCurrency())) // Usar la moneda directamente
 	        .append("available", product.isAvailable())
 	        .append("stock", product.getStock())
 	        .append("id", product.getId());
@@ -110,6 +112,7 @@ public class DaoImplMongoDB implements Dao {
 	        e.printStackTrace();
 	    }
 	}
+
 
 
 	@Override
