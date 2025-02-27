@@ -20,6 +20,12 @@
 	 <artifactId>hibernate-core</artifactId>
 	 <version>5.4.10.Final</version>
 </dependency>
+ <!-- MONGO DB -->
+ <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.10.2</version>
+        </dependency>
     <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>

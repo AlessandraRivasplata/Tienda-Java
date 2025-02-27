@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import dao.DaoImplJaxb;
+import dao.DaoImplMongoDB;
 import dao.Dao;
 import dao.DaoImplFile;
 import dao.DaoImplHibernate;
@@ -33,7 +34,8 @@ public class Shop {
     //private static final String INVENTORY_FILE_PATH = "xml/inputinventory.xml";  
     static final double TAX_RATE = 1.04;
     //private Dao dao =new DaoImplJDBC(); // Atributo dao
-    private Dao dao = new DaoImplHibernate();
+    //private Dao dao = new DaoImplHibernate();
+    private Dao dao = new DaoImplMongoDB();
     
     public Shop() {
         this.cash = 100.0;
