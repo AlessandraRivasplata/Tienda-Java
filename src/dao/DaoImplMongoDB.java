@@ -9,6 +9,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import model.Employee;
@@ -153,8 +154,19 @@ public class DaoImplMongoDB implements Dao {
 
 	@Override
 	public void deleteProduct(int productId) {
-		// TODO Auto-generated method stub
-		
+	    var collection = database.getCollection("inventory");
+	    try {   
+	        Bson filter = Filters.eq("id", productId);// Creamos un filtro para buscar el producto por su id
+	        DeleteResult result = collection.deleteOne(filter); // Eliminamos el producto de la base de datos
+	        if (result.getDeletedCount() > 0) {
+	            System.out.println("Producto eliminado correctamente con id: " + productId);
+	        } else {
+	            System.out.println("Producto no encontrado con id: " + productId);
+	        }
+	    } catch (Exception e) {
+	        System.out.println("Error al eliminar el producto: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 
 }
