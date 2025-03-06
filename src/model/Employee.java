@@ -3,6 +3,7 @@ package model;
 import main.Logable;
 import dao.Dao;
 import dao.DaoImplJDBC;
+import dao.DaoImplMongoDB;
 
 public class Employee extends Person implements Logable {
     private int employeeId;
@@ -12,7 +13,8 @@ public class Employee extends Person implements Logable {
 
     public Employee() {
         super();
-        this.dao = new DaoImplJDBC();
+        //this.dao = new DaoImplJDBC();
+        this.dao = new DaoImplMongoDB();
     }
 
     @Override
