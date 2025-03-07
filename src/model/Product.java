@@ -116,5 +116,15 @@ public class Product {
         return "Product [id=" + id + ", name=" + name + ", publicPrice=" + publicPrice.getValue() + publicPrice.getCurrency() +
                 ", wholesalerPrice=" + wholesalerPrice.getValue() + wholesalerPrice.getCurrency() + ", stock=" + stock + "]";
     }
+
+	public String getPrice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setPrice(double parseDouble) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 

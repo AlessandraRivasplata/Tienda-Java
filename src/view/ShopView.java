@@ -11,8 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import dao.DaoImplFile;
 //import dao.DaoImplFile; // Importar DaoImplFile
-import dao.DaoImplJDBC;  
+import dao.DaoImplJDBC;
+import dao.DaoImplMongoDB;
 import main.Shop;
 
 import javax.swing.JLabel;
@@ -30,8 +32,10 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
     private JButton btnNewButtonDelete;
     private JButton btnNewButtonExportar;
     private Shop shop;
-   // private DaoImplFile dao; // Declarar el objeto dao
-    private DaoImplJDBC dao; 
+    //private DaoImplJDBC dao; // Declarar el objeto dao
+   
+    private DaoImplMongoDB dao;
+   
     /**
      * Launch the application.
      */
@@ -53,7 +57,8 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
      */
     public ShopView() {
         super("MiTienda.com - Menu principal");
-        this.dao = new DaoImplJDBC();  // Inicializa DaoImplJDBC
+        this.dao = new DaoImplMongoDB();  // Inicializa DaoImplJDBC
+        //this.dao = new DaoImplJDBC();
         this.shop = new Shop();  // Inicializa la tienda
         this.shop.loadInventory(); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
