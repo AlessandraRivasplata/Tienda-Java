@@ -69,7 +69,6 @@ public class DaoImplMongoDB implements Dao {
 	public void disconnect() {
 		// TODO Auto-generated method stub	
 	}
-	//ARRAY LIST
 	@Override
 	public ArrayList<Product> getInventory() {
 	    ArrayList<Product> products = new ArrayList<>();
@@ -92,6 +91,11 @@ public class DaoImplMongoDB implements Dao {
 	                doc.getInteger("stock")
 	            );
 	            products.add(product);
+	            // Imprimir cada producto cargado
+	            System.out.println("Producto cargado: " + product.getName() +
+	                               " | Precio: " + priceValue + 
+	                               " | Disponible: " + product.isAvailable() +
+	                               " | Stock: " + product.getStock());
 	        }
 	        System.out.println("Inventario conectado. Total de productos: " + products.size()); 
 	    } catch (Exception e) {
@@ -101,6 +105,7 @@ public class DaoImplMongoDB implements Dao {
 
 	    return products;
 	}
+
 	@Override
 	public boolean writeInventory(ArrayList<Product> products) {
 	    int insertedCount = 0;
